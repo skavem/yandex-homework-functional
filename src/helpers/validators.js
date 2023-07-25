@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /**
  * @file Домашка по FP ч. 1
  *
@@ -13,38 +14,93 @@
  * Если какие либо функции написаны руками (без использования библиотек) это не является ошибкой
  */
 
-// 1. Красная звезда, зеленый квадрат, все остальные белые.
-export const validateFieldN1 = ({star, square, triangle, circle}) => {
-    if (triangle !== 'white' || circle !== 'white') {
-        return false;
-    }
+import {
+  __,
+  allPass,
+  any,
+  compose,
+  converge,
+  count,
+  countBy,
+  curry,
+  equals,
+  flip,
+  gte,
+  identity,
+  length,
+  not,
+  omit,
+  prop,
+  useWith,
+  values,
+} from "ramda";
 
-    return star === 'red' && square === 'green';
-};
+const isOfColor = equals;
+const isFigureOfColor = useWith(flip(compose), [prop, isOfColor]);
+const countByColor = (color) => compose(count(isOfColor(color)), values);
+const countByIdentity = countBy(identity);
+const countAllColors = compose(countByIdentity, values);
+const countAllFigures = compose(length, values);
+const isMoreThan = flip(gte);
+
+// 1. Красная звезда, зеленый квадрат, все остальные белые.
+export const validateFieldN1 = allPass([
+  isFigureOfColor("star")("red"),
+  isFigureOfColor("square")("green"),
+  isFigureOfColor("triangle")("white"),
+  isFigureOfColor("circle")("white"),
+]);
 
 // 2. Как минимум две фигуры зеленые.
-export const validateFieldN2 = () => false;
+const countGreen = countByColor("green");
+export const validateFieldN2 = compose(gte(__, 2), countGreen);
 
 // 3. Количество красных фигур равно кол-ву синих.
-export const validateFieldN3 = () => false;
+const countRed = countByColor("red");
+const countBlue = countByColor("blue");
+export const validateFieldN3 = converge(equals, [countRed, countBlue]);
 
 // 4. Синий круг, красная звезда, оранжевый квадрат треугольник любого цвета
-export const validateFieldN4 = () => false;
+export const validateFieldN4 = allPass([
+  isFigureOfColor("circle")("blue"),
+  isFigureOfColor("star")("red"),
+  isFigureOfColor("square")("orange"),
+]);
 
 // 5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).
-export const validateFieldN5 = () => false;
+const countColorsExceptWhite = compose(values, omit(["white"]), countAllColors);
+const hasAnyColorMoreThanThreeFigures = any(isMoreThan(3));
+export const validateFieldN5 = compose(
+  hasAnyColorMoreThanThreeFigures,
+  countColorsExceptWhite
+);
 
 // 6. Ровно две зеленые фигуры (одна из зелёных – это треугольник), плюс одна красная. Четвёртая оставшаяся любого доступного цвета, но не нарушающая первые два условия
-export const validateFieldN6 = () => false;
+const onlyTwoGreen = compose(equals(2), countGreen);
+const onlyOneRed = compose(equals(1), countRed);
+export const validateFieldN6 = allPass([
+  onlyTwoGreen,
+  isFigureOfColor("triangle")("green"),
+  onlyOneRed,
+]);
 
 // 7. Все фигуры оранжевые.
-export const validateFieldN7 = () => false;
+const countOrange = countByColor("orange");
+export const validateFieldN7 = converge(equals, [countAllFigures, countOrange]);
 
 // 8. Не красная и не белая звезда, остальные – любого цвета.
-export const validateFieldN8 = () => false;
+export const validateFieldN8 = allPass([
+  compose(not, isFigureOfColor("star")("red")),
+  compose(not, isFigureOfColor("star")("white")),
+]);
 
 // 9. Все фигуры зеленые.
-export const validateFieldN9 = () => false;
+export const validateFieldN9 = converge(equals, [countAllFigures, countGreen]);
 
 // 10. Треугольник и квадрат одного цвета (не белого), остальные – любого цвета
-export const validateFieldN10 = () => false;
+const areSquareAndTriangleOfOneColor = converge(equals, [prop("triangle"), prop("square")])
+export const validateFieldN10 = allPass([
+  compose(not, isFigureOfColor("square")("white")),
+  compose(not, isFigureOfColor("triangle")("white")),
+  areSquareAndTriangleOfOneColor,
+]);
