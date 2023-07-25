@@ -22,7 +22,6 @@ import {
   converge,
   count,
   countBy,
-  curry,
   equals,
   flip,
   gte,
@@ -32,7 +31,7 @@ import {
   omit,
   prop,
   useWith,
-  values,
+  values
 } from "ramda";
 
 const isOfColor = equals;
