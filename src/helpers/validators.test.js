@@ -3,6 +3,8 @@ import { COLORS, SHAPES } from "../constants";
 import {
   validateFieldN1,
   validateFieldN2,
+  validateFieldN3,
+  validateFieldN4,
   validateFieldN5,
   validateFieldN6,
   validateFieldN7,
@@ -19,7 +21,7 @@ const paintShapes = (colors) => {
   }, {});
 };
 
-describe("N1 Красная звезда, зеленый квадрат, все остальные белые", () => {
+describe("1 Красная звезда, зеленый квадрат, все остальные белые", () => {
   test("Если все цвета ок, то true", () => {
     const colors = [COLORS.WHITE, COLORS.GREEN, COLORS.WHITE, COLORS.RED];
     const shapes = paintShapes(colors);
@@ -52,7 +54,7 @@ describe("N1 Красная звезда, зеленый квадрат, все 
   });
 });
 
-describe("N2  Как минимум две фигуры зеленые", () => {
+describe("2  Как минимум две фигуры зеленые", () => {
   test("4 зелёных", () => {
     const colors = [COLORS.GREEN, COLORS.GREEN, COLORS.GREEN, COLORS.GREEN];
     const shapes = paintShapes(colors);
@@ -91,7 +93,99 @@ describe("N2  Как минимум две фигуры зеленые", () => {
   });
 });
 
-describe("№5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).", () => {
+describe("3. Количество красных фигур равно кол-ву синих.", () => {
+  it("True если 2 красных и 2 синих", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.RED,
+      [SHAPES.SQUARE]: COLORS.RED,
+      [SHAPES.CIRCLE]: COLORS.BLUE,
+      [SHAPES.STAR]: COLORS.BLUE,
+    };
+
+    expect(validateFieldN3(shapes)).toBe(true);
+  });
+
+  it("True если 1 красная и 1 синяя", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.RED,
+      [SHAPES.SQUARE]: COLORS.GREEN,
+      [SHAPES.CIRCLE]: COLORS.GREEN,
+      [SHAPES.STAR]: COLORS.BLUE,
+    };
+
+    expect(validateFieldN3(shapes)).toBe(true);
+  });
+
+  it("True если 0 красных и 0 синих", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.ORANGE,
+      [SHAPES.SQUARE]: COLORS.GREEN,
+      [SHAPES.CIRCLE]: COLORS.GREEN,
+      [SHAPES.STAR]: COLORS.WHITE,
+    };
+
+    expect(validateFieldN3(shapes)).toBe(true);
+  });
+
+  it("False если 1 красная и 0 синих", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.ORANGE,
+      [SHAPES.SQUARE]: COLORS.ORANGE,
+      [SHAPES.CIRCLE]: COLORS.ORANGE,
+      [SHAPES.STAR]: COLORS.RED,
+    };
+
+    expect(validateFieldN3(shapes)).toBe(false);
+  });
+
+  it("False если 1 красная и 2 синих", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.BLUE,
+      [SHAPES.SQUARE]: COLORS.BLUE,
+      [SHAPES.CIRCLE]: COLORS.ORANGE,
+      [SHAPES.STAR]: COLORS.RED,
+    };
+
+    expect(validateFieldN3(shapes)).toBe(false);
+  });
+});
+
+describe("4. Синий круг, красная звезда, оранжевый квадрат треугольник любого цвета", () => {
+  it("True если синий круг, красная звезда, оранжевый квадрат и белый треугольник", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.WHITE,
+      [SHAPES.SQUARE]: COLORS.ORANGE,
+      [SHAPES.CIRCLE]: COLORS.BLUE,
+      [SHAPES.STAR]: COLORS.RED,
+    };
+
+    expect(validateFieldN4(shapes)).toBe(true);
+  });
+
+  it("False если круг красный", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.WHITE,
+      [SHAPES.SQUARE]: COLORS.ORANGE,
+      [SHAPES.CIRCLE]: COLORS.RED,
+      [SHAPES.STAR]: COLORS.RED,
+    };
+
+    expect(validateFieldN4(shapes)).toBe(false);
+  });
+
+  it("False если звезда оранжевая", () => {
+    const shapes = {
+      [SHAPES.TRIANGLE]: COLORS.WHITE,
+      [SHAPES.SQUARE]: COLORS.ORANGE,
+      [SHAPES.CIRCLE]: COLORS.BLUE,
+      [SHAPES.STAR]: COLORS.ORANGE,
+    };
+
+    expect(validateFieldN4(shapes)).toBe(false);
+  });
+});
+
+describe("5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).", () => {
   it("True если 3 фигуры синие", () => {
     const colors = [COLORS.BLUE, COLORS.BLUE, COLORS.BLUE, COLORS.RED];
     const shapes = paintShapes(colors);
@@ -135,7 +229,7 @@ describe("№5. Три фигуры одного любого цвета кро�
   });
 });
 
-describe("№6. Ровно две зеленые фигуры (одна из зелёных – это треугольник), плюс одна красная. Четвёртая оставшаяся любого доступного цвета, но не нарушающая первые два условия", () => {
+describe("6. Ровно две зеленые фигуры (одна из зелёных – это треугольник), плюс одна красная. Четвёртая оставшаяся любого доступного цвета, но не нарушающая первые два условия", () => {
   it("True если 2 зеленых (треугольник и квадрат) и 1 красная (круг)", () => {
     const shapes = {
       [SHAPES.TRIANGLE]: COLORS.GREEN,
