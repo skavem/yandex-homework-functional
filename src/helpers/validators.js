@@ -29,13 +29,14 @@ import {
   length,
   not,
   omit,
+  pipe,
   prop,
   useWith,
   values
 } from "ramda";
 
 const isOfColor = equals;
-const isFigureOfColor = useWith(flip(compose), [prop, isOfColor]);
+const isFigureOfColor = useWith(pipe, [prop, isOfColor]);
 const countByColor = (color) => compose(count(isOfColor(color)), values);
 const countByIdentity = countBy(identity);
 const countAllColors = compose(countByIdentity, values);
@@ -52,7 +53,8 @@ export const validateFieldN1 = allPass([
 
 // 2. Как минимум две фигуры зеленые.
 const countGreen = countByColor("green");
-export const validateFieldN2 = compose(gte(__, 2), countGreen);
+const moreThanOrEqual2 = flip(gte)(2);
+export const validateFieldN2 = compose(moreThanOrEqual2, countGreen);
 
 // 3. Количество красных фигур равно кол-ву синих.
 const countRed = countByColor("red");
